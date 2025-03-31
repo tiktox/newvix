@@ -1,0 +1,28 @@
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="video" id="videoInput" accept="video/mp4" required>
+    <button type="submit">Subir Video</button>
+</form>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    const fileInput = document.getElementById('videoInput');
+    
+    if (fileInput.files.length === 0) {
+        alert("Selecciona un video");
+        return;
+    }
+
+    formData.append('video', fileInput.files[0]);
+
+    const response = await fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+    alert("URL del video: " + data.url);
+});
+</script>
