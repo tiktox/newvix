@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Video</title>
+</head>
+<body>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="video" id="videoInput" accept="video/mp4" required>
+        <button type="submit">Subir Video</button>
+    </form>
+
+    <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        const fileInput = document.getElementById('videoInput');
+        
+        if (fileInput.files.length === 0) {
+            alert("Selecciona un video");
+            return;
+        }
+
+        formData.append('video', fileInput.files[0]);
+
+        try {
+            const response = await fetch('https://newvix-production.up.railway.app/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            alert("URL del video: " + data.url);
+        } catch (error) {
+            alert("Error al subir el video: " + error.message);
+        }
+    });
+    </script>
+</body>
+</html>
