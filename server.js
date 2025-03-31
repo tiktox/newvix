@@ -2,20 +2,27 @@ const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 app.use(cors());
-app.use(express.static('uploads')); // Hacer que la carpeta 'uploads' sea accesible públicamente
+app.use(express.static('uploads'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Crear la carpeta uploads si no existe
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 // Configuración de almacenamiento para Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Guardar en la carpeta 'uploads'
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext); // Renombrar el archivo con timestamp
+        cb(null, Date.now() + ext);
     }
 });
 
@@ -33,5 +40,5 @@ app.post('/upload', upload.single('video'), (req, res) => {
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
